@@ -24,20 +24,20 @@ import java.util.Queue;
  *
  * <p>Device configuration and other behaviors not exposed by TunerConstants can be customized here.
  */
-public class ModuleIOTalonFXReal extends ModuleIOTalonFX {
+public class ModuleIOTalonFXMagReal extends ModuleIOTalonFXMag {
   // Queue to read inputs from odometry thread
   private final Queue<Double> timestampQueue;
   private final Queue<Double> drivePositionQueue;
   private final Queue<Double> turnPositionQueue;
 
-  public ModuleIOTalonFXReal(SwerveModuleConstants constants) {
+  public ModuleIOTalonFXMagReal(SwerveModuleConstants constants) {
     super(constants);
 
     this.timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
     this.drivePositionQueue =
         PhoenixOdometryThread.getInstance().registerSignal(super.drivePosition);
     this.turnPositionQueue =
-        PhoenixOdometryThread.getInstance().registerSignal(super.turnAbsolutePosition);
+        PhoenixOdometryThread.getInstance().registerSignal(super.magcoder::getAbsolutePosition);
   }
 
   @Override
@@ -54,5 +54,21 @@ public class ModuleIOTalonFXReal extends ModuleIOTalonFX {
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+  }
+
+  @Override
+  public void resetToAbsolute() {
+    magcoder.finishCalibration();
+
+    double magRotations = magcoder.getAbsolutePosition();
+
+    double absolutePosition = magRotations - this.constants.EncoderOffset;
+
+    turnTalon.setPosition(absolutePosition);
+  }
+
+  @Override
+  public int calibrateAbsoluteEncoder() {
+    return magcoder.calibrate();
   }
 }
