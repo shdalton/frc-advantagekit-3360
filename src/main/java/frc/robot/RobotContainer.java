@@ -63,10 +63,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
-                new ModuleIOTalonFXReal(TunerConstants.FrontRight),
-                new ModuleIOTalonFXReal(TunerConstants.BackLeft),
-                new ModuleIOTalonFXReal(TunerConstants.BackRight),
+                new ModuleIOTalonFXMagReal(TunerConstants.FrontLeft),
+                new ModuleIOTalonFXMagReal(TunerConstants.FrontRight),
+                new ModuleIOTalonFXMagReal(TunerConstants.BackLeft),
+                new ModuleIOTalonFXMagReal(TunerConstants.BackRight),
                 (pose) -> {});
         this.vision =
             new Vision(
